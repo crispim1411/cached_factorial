@@ -1,7 +1,7 @@
 use std::process;
 use std::io;
 
-use cached_factorial::Cacher;
+use cached_factorial::{ read_params, Cacher };
 
 fn main() {
     let mut cache_result = Cacher::new(factorial);
@@ -19,18 +19,6 @@ fn main() {
 
         let result = cache_result.value(num);
         println!("Factorial of {} is {}\n", num, result);
-    }
-}
-
-fn read_params(arg: &String) -> Result<u64, &str> {
-    match arg.trim().parse::<u64>() {
-        Ok(num) => {
-            if num > 20 {
-                return Err("Number too big for factorial calculation");
-            } 
-            return Ok(num);
-        },
-        Err(_) => return Err("Parsing int error")
     }
 }
 
