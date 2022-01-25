@@ -1,22 +1,29 @@
-use std::env;
 use std::process;
+use std::io;
+
+use cached_factorial::Cacher;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let num = read_params(&args).unwrap_or_else(|err| {
-        eprintln!("{}", err);
-        process::exit(1);
-    });
-    let result = factorial(num);
-    println!("Factorial of {} is {}", num, result);
+    let mut cache_result = Cacher::new(factorial);
+    loop {
+        println!("Type a number for factorial calculation");
+        let mut arg = String::new();
+        io::stdin()
+            .read_line(&mut arg)
+            .expect("Failed to read line");
+
+        let num = read_params(&arg).unwrap_or_else(|err| {
+            eprintln!("{}", err);
+            process::exit(1);
+        });
+
+        let result = cache_result.value(num);
+        println!("Factorial of {} is {}\n", num, result);
+    }
 }
 
-fn read_params(args: &[String]) -> Result<u64, &str> {
-    if args.len() < 2 {
-        return Err("Missing number parameter");
-    }
-
-    match args[1].trim().parse::<u64>() {
+fn read_params(arg: &String) -> Result<u64, &str> {
+    match arg.trim().parse::<u64>() {
         Ok(num) => {
             if num > 20 {
                 return Err("Number too big for factorial calculation");
